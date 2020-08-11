@@ -7,7 +7,7 @@ import tldr
 
 
 # noinspection SpellCheckingInspection
-token: str = "NzQyODAwNTA3MjEwMzAxNTIw.XzLY4Q.ujWraK6YPI775Sheb3Ym_KSBqT8"
+token: str = "revoked, accidentally made public"
 
 
 # noinspection PyMethodMayBeStatic
