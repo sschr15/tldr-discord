@@ -20,7 +20,7 @@ def refresh_cache():
         cache = zf.namelist()
 
 
-def get_or_none(name: str, language: str) -> Optional[str]:
+def get_or_none(name: str, language: str = "") -> Optional[str]:
     """
     Get the markdown file, or None if it doesn't exist
     """
@@ -34,8 +34,10 @@ def get_or_none(name: str, language: str) -> Optional[str]:
             return None
     else:
         for i in ["common", "linux", "windows", "macos", "sunos"]:
-            results = get_or_none(f'pages{"." + language if language else ""}/{i}/{name}.md', "")
-            if results is not None:
+            results = get_or_none(f'pages{"." + language if language else ""}/{i}/{name}.md')
+            if results is None and language:
+                results = get_or_none(name)
+            elif results is not None:
                 break
         return results
 
