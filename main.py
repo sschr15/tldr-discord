@@ -9,6 +9,9 @@ import tldr
 # noinspection SpellCheckingInspection
 token: str = "revoked, accidentally made public"
 
+# If you want a custom language, input the language as shown in the tldr pages here.
+language = ""
+
 
 # noinspection PyMethodMayBeStatic
 class Client(discord.Client):
@@ -22,7 +25,7 @@ class Client(discord.Client):
 
         if content.startswith("!tldr "):
             command = "-".join(content.split(" ")[1:])
-            embed = tldr.parse(command)
+            embed = tldr.parse(command, language)
             await channel.send(embed=embed)
         elif content == "!tldrrefresh":
             tldr.refresh_cache()

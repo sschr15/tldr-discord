@@ -20,12 +20,11 @@ def refresh_cache():
         cache = zf.namelist()
 
 
-def get_or_none(name: str) -> Optional[str]:
+def get_or_none(name: str, language: str) -> Optional[str]:
     """
     Get the markdown file, or None if it doesn't exist
-    :param name: the name of the command (dashes replacing spaces)
     """
-    if name.startswith("pages/"):
+    if name.startswith("pages"):
         if name in cache:
             with zipfile.ZipFile("tldr.zip") as zf:
                 file_loc = zf.extract(name)
@@ -35,20 +34,21 @@ def get_or_none(name: str) -> Optional[str]:
             return None
     else:
         for i in ["common", "linux", "windows", "macos", "sunos"]:
-            results = get_or_none(f'pages/{i}/{name}.md')
+            results = get_or_none(f'pages{"." + language if language else ""}/{i}/{name}.md', "")
             if results is not None:
                 break
         return results
 
 
-def parse(name: str) -> discord.Embed:
+def parse(name: str, language: str = "") -> discord.Embed:
     """
     Take a command and return a Discord Embed of the tldr command
 
     :param name: the command (using dashes in place of spaces)
+    :param language: the language to use for the pages, or an empty string for English
     :return: an embed of the tldr file
     """
-    file = get_or_none(name)
+    file = get_or_none(name, language)
     if file:
         lines = file.splitlines()
         title = lines[0][2:]
