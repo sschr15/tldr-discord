@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import zipfile
 import discord
 
@@ -20,7 +20,7 @@ def refresh_cache():
         cache = zf.namelist()
 
 
-def get_or_none(name: str, language: str = "") -> Optional[str]:
+def get_or_none(name: str, language: str = "", preferred_os: str = "common") -> Tuple[Optional[str], str]:
     """
     Get the markdown file, or None if it doesn't exist
     """
@@ -29,33 +29,34 @@ def get_or_none(name: str, language: str = "") -> Optional[str]:
             with zipfile.ZipFile("tldr.zip") as zf:
                 file_loc = zf.extract(name)
             with open(file_loc) as file:
-                return file.read()
+                return file.read(), ""
         else:
-            return None
+            return None, ""
     else:
-        for i in ["common", "linux", "windows", "macos", "sunos"]:
+        for i in [preferred_os, "common", "linux", "windows", "macos", "sunos"]:
             results = get_or_none(f'pages{"." + language if language else ""}/{i}/{name}.md')
-            if results is None and language:
+            if results == (None, "") and language:
                 results = get_or_none(name)
-            elif results is not None:
+            elif results != (None, ""):
                 break
-        return results
+        return results[0], i
 
 
-def parse(name: str, language: str = "") -> discord.Embed:
+def parse(name: str, language: str = "", preferred_os="common") -> discord.Embed:
     """
     Take a command and return a Discord Embed of the tldr command
 
     :param name: the command (using dashes in place of spaces)
     :param language: the language to use for the pages, or an empty string for English
+    :param preferred_os: the OS to check first
     :return: an embed of the tldr file
     """
-    file = get_or_none(name, language)
-    if file:
-        lines = file.splitlines()
+    file = get_or_none(name, language, preferred_os)
+    if file[0]:
+        lines = file[0].splitlines()
         title = lines[0][2:]
         embed = discord.Embed(
-            title=title,
+            title=title + ("" if preferred_os == file[1] else f' ({file[1]})'),
             colour=0x00F0FF,
             description="\n".join(lines[1:]).strip()
         )

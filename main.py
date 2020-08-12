@@ -23,13 +23,17 @@ class Client(discord.Client):
         content: str = message.content
         channel: discord.TextChannel = message.channel
 
-        if content.startswith("!tldr "):
-            command = "-".join(content.split(" ")[1:])
-            embed = tldr.parse(command, language)
-            await channel.send(embed=embed)
-        elif content == "!tldrrefresh":
+        if content == "!tldrrefresh":
             tldr.refresh_cache()
             await channel.send("Cache refreshed!")
+        elif content.startswith("!tldr"):
+            if content.startswith("!tldros"):
+                split_at = 2
+            else:
+                split_at = 1
+            command = "-".join(content.split(" ")[split_at:])
+            embed = tldr.parse(command, language, command[1] if bool(split_at - 1) else "common")
+            await channel.send(embed=embed)
 
 
 if __name__ == '__main__':
