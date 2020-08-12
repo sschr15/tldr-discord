@@ -32,7 +32,7 @@ class Client(discord.Client):
             else:
                 split_at = 1
             command = "-".join(content.split(" ")[split_at:])
-            embed = tldr.parse(command, language, command[1] if bool(split_at - 1) else "common")
+            embed = tldr.parse(command, language, content.split(" ")[1] if bool(split_at - 1) else "common")
             await channel.send(embed=embed)
 
 

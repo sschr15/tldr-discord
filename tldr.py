@@ -33,7 +33,7 @@ def get_or_none(name: str, language: str = "", preferred_os: str = "common") -> 
         else:
             return None, ""
     else:
-        for i in [preferred_os, "common", "linux", "windows", "macos", "sunos"]:
+        for i in [preferred_os, "common", "linux", "windows", "osx", "sunos"]:
             results = get_or_none(f'pages{"." + language if language else ""}/{i}/{name}.md')
             if results == (None, "") and language:
                 results = get_or_none(name)
@@ -53,7 +53,7 @@ def parse(name: str, language: str = "", preferred_os="common") -> discord.Embed
     """
     file = get_or_none(name, language, preferred_os)
     if file[0]:
-        lines = file[0].splitlines()
+        lines = file[0].replace("\n\n", "\n").splitlines()
         title = lines[0][2:]
         embed = discord.Embed(
             title=title + ("" if preferred_os == file[1] else f' ({file[1]})'),
