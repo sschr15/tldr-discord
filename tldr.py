@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple
 import zipfile
 import discord
+import re
 
 cache: List[str] = []
 
@@ -67,3 +68,14 @@ def parse(name: str, language: str = "", preferred_os="common") -> discord.Embed
             colour=0xF23C3C,
             description="The database does not include this item! Send `!tldrrefresh` to refresh the cache."
         )
+
+
+def languages() -> List[str]:
+    lang_list: List[str] = []
+    for i in cache:
+        if not re.match(r'pages\..*', i):
+            continue
+        lang = i.split(".")[1].split("/")[0]
+        if lang not in lang_list:
+            lang_list.append(lang)
+    return lang_list

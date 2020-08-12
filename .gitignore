@@ -1,5 +1,5 @@
 .idea/
 .env
 tldr.zip
-pages/
+pages*/
 __pycache__/

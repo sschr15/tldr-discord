@@ -27,12 +27,39 @@ class Client(discord.Client):
             tldr.refresh_cache()
             await channel.send("Cache refreshed!")
         elif content.startswith("!tldr"):
-            if content.startswith("!tldros"):
-                split_at = 2
+            if content == "!tldros":
+                embed = discord.Embed(
+                    title="OS Command",
+                    color=0x00FE4D,
+                    description="Request a tldr, prioritizing an OS.\nOptions are `linux`, `windows`, `osx`, and `sunos`."
+                )
+            elif content == "!tldrlang":
+                embed = discord.Embed(
+                    title="Language Command",
+                    color=0x00FE4D,
+                    description="Request a tldr, in a certain language if possible.\nAvailable options are:\n`" + "`, `".join(tldr.languages()) + "`"
+                )
+            elif content == "!tldr":
+                embed = discord.Embed(
+                    title="tldr",
+                    color=0xA930D9,
+                    description="man pages made simple"
+                )
+                embed.set_footer(text="Discord bot created by sschr15")
             else:
-                split_at = 1
-            command = "-".join(content.split(" ")[split_at:])
-            embed = tldr.parse(command, language, content.split(" ")[1] if bool(split_at - 1) else "common")
+                custom_os = False
+                custom_lang = False
+                if content.startswith("!tldros"):
+                    split_at = 2
+                    custom_os = True
+                elif content.startswith("!tldrlang"):
+                    split_at = 2
+                    custom_lang = True
+                else:
+                    split_at = 1
+                command = "-".join(content.split(" ")[split_at:])
+                first = content.split(" ")[1]
+                embed = tldr.parse(command, first if custom_lang else language, first if custom_os else "common")
             await channel.send(embed=embed)
 
 
